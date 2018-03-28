@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Jamila Shakurova](https://up.htmlacademy.ru/javascript/13/user/378505).
-* Наставник: `Неизвестно`.
+* Наставник: `Без наставника`.
 
 ---
 
