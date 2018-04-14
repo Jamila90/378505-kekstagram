@@ -20,6 +20,14 @@ var DESCRIPTIONS = [
   'Вот это тачка!'
 ];
 
+var fragment = document.createDocumentFragment();
+var picturesTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
+var pictures = document.querySelector('.pictures');
+var bigPicture = document.querySelector('.big-picture');
+var socialComments = document.querySelector('.social__comments');
+document.querySelector('.social__comment-count').classList.add('visually-hidden');
+document.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
+
 function getRandomNumber(min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
 }
@@ -34,32 +42,28 @@ function shuffle(arr) {
   return arr;
 }
 
-var ShowAllPhoto = generatePhotoCards(25);
+var objectArrays = generatePhotoCards(25);
 
 function generatePhotoCards(amount) {
 
-  var photoList = [];
+  var photoLists = [];
 
   for (var i = 0; i < amount; i++) {
-    var description = shuffle(DESCRIPTIONS);
+    var descriptions = shuffle(DESCRIPTIONS);
     var comments = shuffle(COMMENTS);
 
     var photoAd = {
       url: 'photos/' + (i + 1) + '.jpg',
       likes: getRandomNumber(LIKES[0], LIKES[1]),
       comments: getRandomNumber(0, 1) ? comments.slice(0, 1) : comments.slice(0, 2),
-      description: description[getRandomNumber(0, description.length)]
+      description: descriptions[getRandomNumber(0, descriptions.length)]
     };
-    photoList.push(photoAd);
+    photoLists.push(photoAd);
   }
-  return photoList;
+  return photoLists;
 }
 
 function renderPictures(arr) {
-  var picturesTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
-  var pictures = document.querySelector('.pictures');
-
-  var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < arr.length; i++) {
     var picturesElement = picturesTemplate.cloneNode(true);
@@ -71,4 +75,32 @@ function renderPictures(arr) {
   pictures.appendChild(fragment);
 }
 
-renderPictures(ShowAllPhoto);
+function displayBigPicture(obj) {
+  bigPicture.classList.remove('hidden');
+
+  bigPicture.querySelector('.big-picture__img img').src = obj.url;
+  bigPicture.querySelector('.likes-count').textContent = obj.likes;
+  bigPicture.querySelector('.comments-count').textContent = obj.comments.length;
+
+  for (var i = 0; i < obj.comments.length; i++) {
+    var comment = document.querySelector('.social__comment').cloneNode();
+    var userSocialPicture = document.querySelector('.social__picture').cloneNode(true);
+    var text = document.createTextNode(obj.comments[i]);
+
+    userSocialPicture.src = 'img/avatar-' + getRandomNumber(1, 6) + '.svg';
+    comment.appendChild(userSocialPicture);
+    comment.appendChild(text);
+    fragment.appendChild(comment);
+  }
+  removeFirstChild(socialComments);
+  socialComments.appendChild(fragment);
+}
+
+function removeFirstChild(firstChildRemove) {
+  while (firstChildRemove.firstChild) {
+    firstChildRemove.removeChild(firstChildRemove.firstChild);
+  }
+}
+
+renderPictures(objectArrays);
+displayBigPicture(objectArrays[0]);
