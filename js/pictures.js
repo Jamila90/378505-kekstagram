@@ -21,7 +21,7 @@ var DESCRIPTIONS = [
 ];
 
 var ESC_KEYCODE = 27;
-var ENTER_KEYCODE = 13;
+// var ENTER_KEYCODE = 13;
 var MIN_SCALE = 25;
 var MAX_SCALE = 100;
 var STEP_SCALE = 25;
@@ -132,7 +132,6 @@ function onUploadFormOpen() {
 }
 
 function onUploadFormClose() {
-  console.log(onUploadFormClose);
   if (imgUploadOverlay) {
     imgUploadOverlay.classList.add('hidden');
   }
@@ -147,7 +146,6 @@ function onUploadFormEscPress(evt) {
 }
 
 function onBigPictureClose() {
-  console.log(onBigPictureClose);
   if (bigPicture) {
     bigPicture.classList.add('hidden');
   }
@@ -155,7 +153,6 @@ function onBigPictureClose() {
 }
 
 function onClickPicture(evt) {
-  console.log(onClickPicture);
   var target;
   if (target === 'picture__link') {
     target = evt.target;
@@ -187,7 +184,6 @@ var resizeControlValue = imgUploadForm.querySelector('.resize__control--value');
 var scaleValueNumber = parseInt(resizeControlValue.value, 10);
 
 function onScaleMinus() {
-  console.log(onScaleMinus);
   if (scaleValueNumber > MIN_SCALE) {
     scaleValueNumber = scaleValueNumber - STEP_SCALE;
     resizeControlValue = scaleValueNumber.toString();
@@ -198,7 +194,6 @@ function onScaleMinus() {
 }
 
 function onScalePlus() {
-  console.log(onScalePlus);
   if (scaleValueNumber < MAX_SCALE) {
     scaleValueNumber = scaleValueNumber + STEP_SCALE;
     resizeControlValue = scaleValueNumber.toString();
@@ -215,7 +210,6 @@ var scalePin = document.querySelector('.scale__pin');
 var imgUploadEffects = document.querySelector('.img-upload__effects');
 
 function OnClickEffects(evt) {
-  console.log(OnClickEffects);
   var target = evt.target.closest('.img-upload__effects');
   if (target) {
     imagePreview.className = 'effects__preview--' + evt.target.value;
