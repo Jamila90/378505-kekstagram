@@ -155,7 +155,6 @@ function onBigPictureClose() {
 }
 
 function onClickPicture(evt) {
-  console.log(onClickPicture);
   var target;
   if (target === 'picture__link') {
     target = evt.target;
@@ -219,22 +218,23 @@ function onClickEffects(evt) {
   var addEffect = document.querySelector('.effects__radio:checked').value;
 
   imgUploadScale.classList.toggle('hidden', addEffect === 'none');
+  setEffectCalculated();
 }
 
 var hashtag = document.querySelector('.text__hashtags');
 var textComment = document.querySelector('.text__description');
-var MIN_HASHTAG = 2;
 var MAX_HASHTAG = 20;
 var MAX_ELEMENTS = 5;
 
 function getSortingHashtags(arr) {
   for (var i = 0; i < arr.length - 1; i++) {
-    for (var j = 0; j < arr.length; j++) {
+    for (var j = i + 1; j < arr.length; j++) {
       if (arr[i].toUpperCase() === arr[j].toUpperCase()) {
         hashtag.setCustomValidity('"Хеш-теги не должны повторяться."');
       }
     }
   }
+  return;
 }
 
 function getEntriesCount(str, symbol) {
@@ -274,7 +274,86 @@ function removeEvent() {
   document.removeEventListener('keydown', onUploadFormEscPress);
 }
 
+// Слайдер
 
+var CHROME_MIN = 0;
+var CHROME_MAX = 1;
+var SEPIA_MIN = 0;
+var SEPIA_MAX = 1;
+var MARVIN_MIN = 0;
+var MARVIN_MAX = 100;
+var PHOBOS_MIN = 0;
+var PHOBOS_MAX = 3;
+var HEAT_MIN = 1;
+var HEAT_MAX = 3;
+var MIN_X = 0;
+var MAX_X = 453;
+var startCoords;
+
+function effectsCalculate(min, max) {
+  var effectIndex = min + ((max - min) / 100 * parseInt(scalePin.style.left, 10));
+  return effectIndex;
+}
+
+function setEffectCalculated() {
+  switch (imagePreview.className) {
+    case 'effects__preview--none':
+      imagePreview.style.filter = 'none';
+      break;
+    case 'effects__preview--chrome':
+      imagePreview.style.filter = 'grayscale(' + effectsCalculate(CHROME_MIN, CHROME_MAX) + ')';
+      break;
+    case 'effects__preview--sepia':
+      imagePreview.style.filter = 'sepia(' + effectsCalculate(SEPIA_MIN, SEPIA_MAX) + ')';
+      break;
+    case 'effects__preview--marvin':
+      imagePreview.style.filter = 'invert(' + effectsCalculate(MARVIN_MIN, MARVIN_MAX) + '%)';
+      break;
+    case 'effects__preview--phobos':
+      imagePreview.style.filter = 'blur(' + effectsCalculate(PHOBOS_MIN, PHOBOS_MAX) + 'px)';
+      break;
+    case 'effects__preview--heat':
+      imagePreview.style.filter = 'brightness(' + effectsCalculate(HEAT_MIN, HEAT_MAX) + ')';
+      break;
+  }
+}
+
+function onMouseDown(evt) {
+  evt.preventDefault();
+
+  startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+}
+
+function onMouseMove(moveEvt) {
+  moveEvt.preventDefault();
+
+  var shift = {
+    x: startCoords.x - moveEvt.clientX,
+  };
+
+  startCoords = {
+    x: moveEvt.clientX,
+  };
+  if ((scalePin.offsetLeft - shift.x) >= MIN_X && (scalePin.offsetLeft - shift.x) <= MAX_X) {
+    scalePin.style.left = (scalePin.offsetLeft - shift.x) + 'px';
+    scaleLevel.style.width = (scaleLevel.offsetWidth - shift.x) + 'px';
+    setEffectCalculated();
+  }
+}
+
+function onMouseUp(upEvt) {
+  upEvt.preventDefault();
+
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mouseup', onMouseUp);
+}
+
+scalePin.addEventListener('mousedown', onMouseDown);
 hashtag.addEventListener('input', onClickHashtag);
 hashtag.addEventListener('focus', removeEvent);
 textComment.addEventListener('focus', removeEvent);
